@@ -47,14 +47,15 @@ class PhpSerial
         if (substr($sysName, 0, 5) === "Linux") {
             $this->_os = "linux";
 
-            if ($this->_exec("stty") === 0) {
+            // STROTTIER "stty: 'standard input': Inappropriate ioctl for device string" in php8.2-fpm
+            // if ($this->_exec("stty") === 0) {
                 register_shutdown_function(array($this, "deviceClose"));
-            } else {
-                trigger_error(
-                    "No stty availible, unable to run.",
-                    E_USER_ERROR
-                );
-            }
+            //} else {
+            //    trigger_error(
+            //        "No stty availible, unable to run.",
+            //        E_USER_ERROR
+            //    );
+            //}
         } elseif (substr($sysName, 0, 6) === "Darwin") {
             $this->_os = "osx";
             register_shutdown_function(array($this, "deviceClose"));
