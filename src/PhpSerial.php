@@ -648,6 +648,46 @@ class PhpSerial
         }
     }
 
+    // STROTTIER ADDED - disable echo on device - must be used before opening device    
+    public function confDisableEcho()
+    {
+        if ($this->_dState !== SERIAL_DEVICE_SET) {
+            trigger_error("Unable to set flow control mode : the device is " .
+                          "either not set or opened", E_USER_WARNING);
+
+            return false;
+        }
+
+        if ($this->_os === "linux") {
+            $ret = $this->_exec(
+                "stty -F " . $this->_device . " -echo",
+                $out
+            );
+        } elseif ($this->_os === "osx") {
+            $ret = $this->_exec(
+                "stty -f " . $this->_device . " -echo",
+                $out
+            );
+        } else {
+            $ret = $this->_exec(
+                "mode " . $this->_winDevice . " -echo",
+                $out
+            );
+        }
+
+        if ($ret === 0) {
+            return true;
+        } else {
+            trigger_error(
+                "Unable to disable echo : " . $out[1],
+                E_USER_ERROR
+            );
+
+            return false;
+        }
+    }
+    
+    
     //
     // I/O SECTION -- {STOP}
     //
